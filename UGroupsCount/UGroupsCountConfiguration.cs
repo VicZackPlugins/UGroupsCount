@@ -1,10 +1,20 @@
 ﻿using Rocket.API;
 using System.Collections.Generic;
+using UnityEngine.Experimental.GlobalIllumination;
 
 namespace VicZackPlugins.UGroupsCount
 {
     public class UGroupsCountConfiguration : IRocketPluginConfiguration
     {
+        // UI ID
+        public ushort UI_ID { get; set; }
+
+        // UI Key
+        public short UI_KEY { get; set; }
+
+        // Direction Mode
+        public int directionMode { get; set; }
+
         // Show the name of group
         public bool showName { get; set; }
 
@@ -16,6 +26,11 @@ namespace VicZackPlugins.UGroupsCount
 
         public void LoadDefaults()
         {
+
+            UI_ID = 46135;
+            UI_KEY = 6135;
+
+            directionMode = 0;
 
             showName = true;
             showCount = true;
