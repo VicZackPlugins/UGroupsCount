@@ -14,6 +14,7 @@ namespace VicZackPlugins.UGroupsCount
     {
         public static UGroupsCountPlugin Instance { get; private set; }
         public HashSet<CSteamID> ActiveUI { get; private set; }
+        public Dictionary<int, int> groupCount { get; private set; } = new Dictionary<int, int>();
         public string PLUGIN_VERSION => "1.0.0";
         protected override void Load()
         {
@@ -29,6 +30,8 @@ namespace VicZackPlugins.UGroupsCount
             Logger.Log("---------------------------------------");
             Logger.Log(" ");
 
+            InitializeCount();
+
             U.Events.OnPlayerConnected += OnPlayerConnected;
             U.Events.OnPlayerDisconnected += OnPlayerDisconnected;
 
@@ -39,7 +42,10 @@ namespace VicZackPlugins.UGroupsCount
             U.Events.OnPlayerConnected -= OnPlayerConnected;
             U.Events.OnPlayerDisconnected -= OnPlayerDisconnected;
 
+            groupCount.Clear();
+
             Logger.Log("[UGC] Plugin unloaded.");
+        
         }
 
         private void OnPlayerConnected(UnturnedPlayer player)
@@ -66,6 +72,14 @@ namespace VicZackPlugins.UGroupsCount
             }
         }
 
+        private void InitializeCount()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                groupCount.Add(i, 0);
+            }
+        }
+
         public GroupSlotConfig GetSlot(int index)
         {
             var slot = Configuration.Instance.Slots?
@@ -78,7 +92,7 @@ namespace VicZackPlugins.UGroupsCount
                 {
                     SlotIndex = index,
                     DisplayName = "N/A",
-                    Icon = 0,
+                    Icon = "",
                     GroupId = null,
                     Enabled = false
                 };

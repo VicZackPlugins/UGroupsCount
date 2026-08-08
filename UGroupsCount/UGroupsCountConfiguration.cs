@@ -1,5 +1,6 @@
 ﻿using Rocket.API;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine.Experimental.GlobalIllumination;
 
 namespace VicZackPlugins.UGroupsCount
@@ -37,12 +38,13 @@ namespace VicZackPlugins.UGroupsCount
 
             Slots = new List<GroupSlotConfig>
             {
-                new GroupSlotConfig { SlotIndex = 0, DisplayName = "Grupo 1", Icon = 100, GroupId = "grupo1" },
-                new GroupSlotConfig { SlotIndex = 1, DisplayName = "Grupo 2", Icon = 101, GroupId = "grupo2" },
-                new GroupSlotConfig { SlotIndex = 2, DisplayName = "Grupo 3", Icon = 102, GroupId = "grupo3" },
-                new GroupSlotConfig { SlotIndex = 3, DisplayName = "Grupo 4", Icon = 103, GroupId = "grupo4" },
-                new GroupSlotConfig { SlotIndex = 4, DisplayName = "Grupo 5", Icon = 104, GroupId = "grupo5" },
-                new GroupSlotConfig { SlotIndex = 5, DisplayName = "Grupo 6", Icon = 105, GroupId = "grupo6" },
+                new GroupSlotConfig { SlotIndex = 0, DisplayName = "Civilian", GroupId = "default" },
+                new GroupSlotConfig { SlotIndex = 1, DisplayName = "Mechanic", GroupId = "mechanic" },
+                new GroupSlotConfig { SlotIndex = 2, DisplayName = "EMS", GroupId = "ems" },
+                new GroupSlotConfig { SlotIndex = 3, DisplayName = "Police", GroupId = "police" },
+                new GroupSlotConfig { SlotIndex = 4, DisplayName = "Military", GroupId = "military" },
+                new GroupSlotConfig { SlotIndex = 5, DisplayName = "Staff", GroupId = "staff" },
+                new GroupSlotConfig { SlotIndex = 6, DisplayName = "Admin", GroupId = "admin" },
             };
 
         }
@@ -52,7 +54,7 @@ namespace VicZackPlugins.UGroupsCount
     {
         public int SlotIndex { get; set; }
         public string DisplayName { get; set; }
-        public ushort Icon { get; set; }
+        public string Icon { get; set; }
         public string GroupId { get; set; }
         public bool Enabled { get; set; } = true;
     }
