@@ -14,13 +14,13 @@ namespace VicZackPlugins.UGroupsCount
         public short UI_KEY { get; set; }
 
         // Direction Mode
-        public int directionMode { get; set; }
+        public string directionMode { get; set; }
 
         // Show the name of group
         public bool showName { get; set; }
 
-        // Show de count of group
-        public bool showCount { get; set; }
+        // Count only one group per player
+        public bool oneGroupPerPlayer { get; set; }
 
         // Show group list
         public List<GroupSlotConfig> Slots { get; set; }
@@ -31,10 +31,11 @@ namespace VicZackPlugins.UGroupsCount
             UI_ID = 46135;
             UI_KEY = 6135;
 
-            directionMode = 0;
+            directionMode = "vertical";
 
             showName = true;
-            showCount = true;
+
+            oneGroupPerPlayer = true;
 
             Slots = new List<GroupSlotConfig>
             {

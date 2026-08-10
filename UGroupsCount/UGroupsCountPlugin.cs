@@ -7,14 +7,13 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using VicZackPlugins.UGroupsCount.Managers;
 
 namespace VicZackPlugins.UGroupsCount
 {
     public class UGroupsCountPlugin : RocketPlugin<UGroupsCountConfiguration>
     {
         public static UGroupsCountPlugin Instance { get; private set; }
-        public HashSet<CSteamID> ActiveUI { get; private set; }
-        public Dictionary<int, int> groupCount { get; private set; } = new Dictionary<int, int>();
         public string PLUGIN_VERSION => "1.0.0";
         protected override void Load()
         {
@@ -30,7 +29,7 @@ namespace VicZackPlugins.UGroupsCount
             Logger.Log("---------------------------------------");
             Logger.Log(" ");
 
-            InitializeCount();
+            CountSystemManager.Initialize();
 
             U.Events.OnPlayerConnected += OnPlayerConnected;
             U.Events.OnPlayerDisconnected += OnPlayerDisconnected;
@@ -42,7 +41,7 @@ namespace VicZackPlugins.UGroupsCount
             U.Events.OnPlayerConnected -= OnPlayerConnected;
             U.Events.OnPlayerDisconnected -= OnPlayerDisconnected;
 
-            groupCount.Clear();
+            CountSystemManager.Shutdown();
 
             Logger.Log("[UGC] Plugin unloaded.");
         
@@ -53,11 +52,10 @@ namespace VicZackPlugins.UGroupsCount
             var connection = player.SteamPlayer().transportConnection;
             var config = UGroupsCountPlugin.Instance.Configuration.Instance;
 
-            EffectManager.sendUIEffect(config.UI_ID, config.UI_KEY, connection, true);
+            CountSystemManager.ActivePlayerUI(player);
 
-            ActiveUI.Add(player.CSteamID);
-
-            // Usar GroupSlotConfig en un bucle for y activar de a poco las opciones.
+            CountSystemManager.IsInGroup(player, true);
+            CountSystemManager.UpdateAllClients();
 
         }
 
@@ -66,39 +64,8 @@ namespace VicZackPlugins.UGroupsCount
             var connection = player.SteamPlayer().transportConnection;
             var config = UGroupsCountPlugin.Instance.Configuration.Instance;
 
-            if (ActiveUI.Contains(player.CSteamID))
-            {
-                // Enviar actualizacion de UI
-            }
-        }
-
-        private void InitializeCount()
-        {
-            for (int i = 0; i < 6; i++)
-            {
-                groupCount.Add(i, 0);
-            }
-        }
-
-        public GroupSlotConfig GetSlot(int index)
-        {
-            var slot = Configuration.Instance.Slots?
-                .FirstOrDefault(s => s.SlotIndex == index);
-
-            if (slot == null)
-            {
-                
-                return new GroupSlotConfig
-                {
-                    SlotIndex = index,
-                    DisplayName = "N/A",
-                    Icon = "",
-                    GroupId = null,
-                    Enabled = false
-                };
-            }
-
-            return slot;
+            CountSystemManager.IsInGroup(player, false);
+            CountSystemManager.UpdateAllClients();
         }
     }
 }
