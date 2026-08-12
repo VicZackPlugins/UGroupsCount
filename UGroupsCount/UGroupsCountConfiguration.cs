@@ -31,7 +31,7 @@ namespace VicZackPlugins.UGroupsCount
             UI_ID = 46135;
             UI_KEY = 6135;
 
-            directionMode = "vertical";
+            directionMode = "horizontal";
 
             showName = true;
 

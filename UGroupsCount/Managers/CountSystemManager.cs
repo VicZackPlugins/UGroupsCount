@@ -1,5 +1,6 @@
 ﻿using Rocket.API.Serialisation;
 using Rocket.Core;
+using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
@@ -15,7 +16,7 @@ namespace VicZackPlugins.UGroupsCount.Managers
 {
     public class CountSystemManager
     {
-        public static HashSet<CSteamID> PlayersActiveUI { get; private set; }
+        public static HashSet<CSteamID> PlayersActiveUI { get; private set; } = new HashSet<CSteamID>();
         public static Dictionary<int, int> GroupsCount { get; private set; } = new Dictionary<int, int>();
 
         public static void Initialize()
@@ -24,6 +25,20 @@ namespace VicZackPlugins.UGroupsCount.Managers
             {
                 GroupsCount.Add(i, 0);
             }
+
+            foreach (SteamPlayer client in Provider.clients)
+            {
+                UnturnedPlayer player = UnturnedPlayer.FromSteamPlayer(client);
+
+                PlayersActiveUI.Add(player.CSteamID);
+                IsInGroup(player, true);
+            }
+
+            if (PlayersActiveUI.Count > 0)
+            {
+                UpdateAllClients();
+            }
+
         }
 
         public static void Shutdown()
@@ -48,8 +63,8 @@ namespace VicZackPlugins.UGroupsCount.Managers
             var config = plugin.Configuration.Instance;
             string mode;
 
-            if (config.directionMode.Equals("vertical", StringComparison.OrdinalIgnoreCase)) mode = "v";
-            else mode = "h";
+            if (config.directionMode.Equals("horizontal", StringComparison.OrdinalIgnoreCase)) mode = "h";
+            else mode = "v";
 
             foreach (SteamPlayer client in Provider.clients)
             {
@@ -71,8 +86,8 @@ namespace VicZackPlugins.UGroupsCount.Managers
 
                         EffectManager.sendUIEffectVisibility(config.UI_KEY, connection, true, $"{mode}Img_Slot{i}", true);
 
-                        if (config.showName) EffectManager.sendUIEffectText(config.UI_KEY, connection, true, $"{mode}Txt_Name_Slot{i}", "");
-                        else EffectManager.sendUIEffectText(config.UI_KEY, connection, true, $"{mode}Txt_Name_Slot{i}", slot.DisplayName);
+                        if (config.showName) EffectManager.sendUIEffectText(config.UI_KEY, connection, true, $"{mode}Txt_Name_Slot{i}", slot.DisplayName);
+                        else EffectManager.sendUIEffectText(config.UI_KEY, connection, true, $"{mode}Txt_Name_Slot{i}", "");
 
                         if (slot.Icon != null) EffectManager.sendUIEffectImageURL(config.UI_KEY, connection, true, $"{mode}Img_Slot{i}", slot.Icon);
 
@@ -98,14 +113,14 @@ namespace VicZackPlugins.UGroupsCount.Managers
 
                 string groupId = slot.GroupId;
 
-                foreach (RocketPermissionsGroup group in Groups)
+                foreach (RocketPermissionsGroup group in Groups.OrderBy(n => n.Priority))
                 {
                     if (group.Id.Equals(groupId, StringComparison.OrdinalIgnoreCase))
                     {
                         if (isJoined) GroupsCount[i] += 1;
                         else GroupsCount[i] -= 1;
 
-                        if (config.oneGroupPerPlayer) break;
+                        if (config.oneGroupPerPlayer) return;
                     }
                 }
             }
